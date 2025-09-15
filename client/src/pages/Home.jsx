@@ -1,5 +1,7 @@
 import React from "react";
 import "../styles/home.css";
+import topicsData from "../data/topicsData";
+import TopicCard from "../components/TopicCard";
 
 export default function Home() {
   return (
@@ -21,60 +23,15 @@ export default function Home() {
       </header>
 
       <section className="cards">
-        {/* Card 1 */}
-        <article className="card">
-          <div className="card-media">
-          </div>
-          <div className="card-body">
-            <h2 className="card-title">Order a Pizza</h2>
-            <p className="card-text">
-              Lorem ipsum dolor sit amet consectetur. Turpis et leo tincidunt sollicitudin pretium.
-              Aliquet phasellus ullamcorper ornare tempor enim ut. Feugiat aliquet fringilla tincidunt
-              vivamus.
-            </p>
-            <button className="btn btn--primary">Select</button>
-          </div>
-        </article>
-
-        {/* Card 2 */}
-        <article className="card">
-          <div className="card-media friends">
-
-          </div>
-          <div className="card-body">
-            <h2 className="card-title">Make a New Friend</h2>
-            <p className="card-text">
-              Practice small talk and introductions with friendly characters. Build confidence in
-              everyday conversations.
-            </p>
-            <button className="btn btn--primary">Select</button>
-          </div>
-        </article>
-        <article className="card">
-          <div className="card-media directions">
-
-          </div>
-          <div className="card-body">
-            <h2 className="card-title">Ask for Directions</h2>
-            <p className="card-text">
-                Navigate real-world scenarios by asking for and understanding directions. Improve your
-                spatial awareness and problem-solving skills.
-            </p>
-            <button className="btn btn--primary">Select</button>
-          </div>
-        </article>
-            {/* Card 4 */}
-            <article className="card">
-          <div className="card-media taxi" />
-          <div className="card-body">
-            <h2 className="card-title">Chat with taxi driver</h2>
-            <p className="card-text">
-                Enhance your travel conversations by chatting with a taxi driver. Learn to communicate
-                effectively in transit situations.
-            </p>
-            <button className="btn btn--primary">Select</button>
-          </div>
-        </article>
+        {topicsData.map((item, i) => (
+        <TopicCard
+          key={i}
+          title={item.title}
+          text={item.text}
+          bgImage={item.bgImage}
+        />
+      ))}
+        
       </section>
     </main>
   );
