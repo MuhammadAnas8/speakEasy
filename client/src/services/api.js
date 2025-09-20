@@ -1,15 +1,8 @@
 import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
-// const API_BASE = import.meta.env.VITE_API_URL || "https://j7spfpsd-5000.inc1.devtunnels.ms/";
-// const API_BASE = import.meta.env.VITE_API_URL || "http://192.168.5.105:5000";
-
-export const api = axios.create({
-  baseURL: API_BASE,
-  timeout: 15000,
-  headers: { "Content-Type": "application/json" },
-});
-
+// const API_BASE = "http://localhost:5000";
+const API_BASE = "";   
+export const api = axios.create({ baseURL: API_BASE });
 
 export async function sendToAssistant({ text, sender }) {
   const { data } = await api.post("/api/chat", { text, sender });

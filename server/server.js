@@ -1,18 +1,22 @@
 import express from "express";
-import cors from "cors";
 
 const app = express();
 
-app.use(cors({
-  origin: ["http://localhost:5173","http://192.168.5.105:5173",],  
-  credentials: true
-}));
+
+// No CORS needed when using Vite proxy (same-origin from the browser POV)
 app.use(express.json());
 
+// Point to your local Rasa server
 const RASA_URL = process.env.RASA_URL || "http://localhost:5005";
 
+// Optional: tiny logger so you can see requests during dev
+app.use((req, _res, next) => {
+  console.log(">>", req.method, req.originalUrl);
+  next();
+});
+
 // Health check to confirm Node -> Rasa connectivity
-app.get("/api/health", async (req, res) => {
+app.get("/api/health", async (_req, res) => {
   try {
     const r = await fetch(`${RASA_URL}/status`);
     const body = await r.json();
@@ -26,24 +30,25 @@ app.get("/api/health", async (req, res) => {
 app.post("/api/chat", async (req, res) => {
   try {
     const { text, sender = "anon" } = req.body || {};
-    if (!text?.trim()) return res.status(400).json({ error: "Missing 'text'" });
+    const message = (text || "").trim();
+    if (!message) return res.status(400).json({ error: "Missing 'text'" });
 
     const upstream = await fetch(`${RASA_URL}/webhooks/rest/webhook`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sender, message: text.trim() })
+      body: JSON.stringify({ sender, message }),
     });
 
     if (!upstream.ok) {
       return res.status(502).json({
         error: "rasa_upstream_error",
         status: upstream.status,
-        body: await upstream.text()
+        body: await upstream.text(),
       });
     }
 
     const messages = await upstream.json(); // array from Rasa
-    const replyText = messages.map(m => m.text).filter(Boolean).join("\n").trim();
+    const replyText = messages.map(m => m?.text).filter(Boolean).join("\n").trim();
 
     res.json({ replyText, messages });
   } catch (err) {
@@ -52,4 +57,7 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("🚀 API running on http://localhost:5000"));
+// Bind to 0.0.0.0 so Vite (and LAN testing) can reach it
+app.listen(5000, "0.0.0.0", () => {
+  console.log("🚀 API running on http://localhost:5000");
+});
