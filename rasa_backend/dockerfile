@@ -1,7 +1,6 @@
-# Use a stable Python for Rasa 3.x
-FROM python:3.10-slim
+# Match your local Python
+FROM python:3.8-slim
 
-# Faster, quieter installs
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DEBIAN_FRONTEND=noninteractive
@@ -11,28 +10,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential curl git && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Rasa (pin to a stable version)
-# If you ever need the action server, we'll add rasa-sdk in that container.
-RUN pip install --no-cache-dir "rasa==3.6.20"
+# Rasa 3.6.x works with Python 3.8
+RUN pip install --no-cache-dir "rasa==3.6.21"
 
-# Workdir
 WORKDIR /app
 
-# Copy ONLY what we need for training first (better layer caching)
-COPY rasa_backend/config.yml ./config.yml
-COPY rasa_backend/domain.yml ./domain.yml
-COPY rasa_backend/data ./data
+# IMPORTANT: Build context is already rasa_backend/, so copy files directly
+COPY config.yml ./config.yml
+COPY domain.yml ./domain.yml
+COPY data ./data
 
-# Train a fresh model from your data (small project = quick)
-# We'll name it "current-model" so the runtime command can reference it consistently.
+# Train a tiny model at build time; name it consistently
 RUN rasa train --fixed-model-name current-model
 
-# Copy remaining files (credentials, endpoints, etc.)
-COPY rasa_backend/ ./
+# Copy the rest (credentials, endpoints, etc.)
+COPY . .
 
-# Render will set $PORT at runtime; expose a default for local runs
+# Expose default port (Render passes $PORT at runtime)
 EXPOSE 8000
 
-# Run Rasa API server; allow CORS for now (we can tighten later)
-# Use $PORT if provided by platform; otherwise default to 8000.
+# Run HTTP API with CORS; use $PORT if provided by platform
 CMD sh -c 'rasa run --enable-api --cors "*" --port ${PORT:-8000} --model models/current-model.tar.gz'

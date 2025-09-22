@@ -2,5 +2,5 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-# We will train inside Docker so we don't need local models:
-models/
+models/   # we train inside the image, so ignore local models
+tests/    # keep tests out of the image as well
