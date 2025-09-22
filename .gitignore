@@ -6,7 +6,6 @@ build/
 # Python/Rasa
 rasa_backend/venv/
 rasa_backend/.rasa/
-rasa_backend/models/
 **/__pycache__/
 **/*.pyc
 *.log
