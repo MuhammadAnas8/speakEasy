@@ -32,9 +32,10 @@ EXPOSE 8000
 # Run HTTP API with CORS; use $PORT if provided by platform
 
 # Explicit host + port from $PORT, and point to the built model
-CMD sh -c 'rasa run \
+
+  CMD sh -c 'rasa run \
   --enable-api \
   --cors "*" \
-  --host 0.0.0.0 \
-  --port ${PORT:-8000} \
-  --model models/current-model.tar.gz'
+  -i 0.0.0.0 \
+  -p ${PORT:-8000} \
+  -m models/current-model.tar.gz'
