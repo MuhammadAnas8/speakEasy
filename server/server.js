@@ -7,9 +7,13 @@ const app = express();
 app.use(express.json());
 
 // Point to your local Rasa server
+const PORT = process.env.PORT || 5000;
+const HOST = "0.0.0.0";
 const RASA_URL = process.env.RASA_URL || "http://localhost:5005";
 
-// Optional: tiny logger so you can see requests during dev
+app.get("/", (_req, res) => res.send("OK"));
+
+//logger
 app.use((req, _res, next) => {
   console.log(">>", req.method, req.originalUrl);
   next();
@@ -58,6 +62,6 @@ app.post("/api/chat", async (req, res) => {
 });
 
 // Bind to 0.0.0.0 so Vite (and LAN testing) can reach it
-app.listen(5000, "0.0.0.0", () => {
-  console.log("🚀 API running on http://localhost:5000");
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 API listening on http://${HOST}:${PORT}`);
 });
