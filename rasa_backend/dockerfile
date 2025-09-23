@@ -34,4 +34,3 @@ EXPOSE 8000
 # Explicit host + port from $PORT, and point to the built model
 
 CMD ["sh","-c","rasa run --enable-api --cors '*' --interface 0.0.0.0 --port ${PORT:-8000} --model models/current-model.tar.gz"]
-
