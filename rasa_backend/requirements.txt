@@ -10,7 +10,7 @@ numpy>=1.23.0,<1.26.0
 protobuf>=4.23.3,<5.0.0
 packaging>=20.0,<21.0
 python-dateutil>=2.8.2,<3.0.0
-pydantic>=1.10.11,<2.0.0
+pydantic<1.10.10
 PyJWT>=2.6.0,<3.0.0
 docopt>=0.6.2
 
